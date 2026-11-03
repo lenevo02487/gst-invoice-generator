@@ -1,1 +1,16 @@
-{"customer":{"address":"Near IOCL Gate, Digboi, Assam — 786171","gstin":"18PQRST6789K1Z2","name":"Digboi Tea House","state_code":"18"},"invoice":{"date":"2026-11-02","due_date":"2026-11-09","number":"INV-2026-001"},"items":[{"gst_percent":5,"hsn":"0902","name":"Assam CTC Tea (1 kg)","qty":10,"rate":420},{"gst_percent":12,"hsn":"6912","name":"Kulhad Earthen Cups (pack of 12)","qty":20,"rate":60},{"gst_percent":5,"hsn":"0910","name":"Chai Masala Combo Pack","qty":15,"rate":149},{"gst_percent":18,"hsn":"8516","name":"Electric Kettle 1.8L","qty":3,"rate":1299},{"gst_percent":18,"hsn":"8539","name":"LED Bulb 9W (set of 4)","qty":8,"rate":299}],"place_of_supply":"Assam","place_of_supply_state_code":"18","shop":{"address":"Mission Para, Digboi, Tinsukia, Assam — 786171","gstin":"18ABCDE1234F1Z5","name":"Phukan Tea & General Store","phone":"+91 98765 43210","state_code":"18"}}
+{
+  "seller": {"name": "Sample Traders", "address": "12 Market Road",
+             "state_code": "18", "gstin": "18ABCDE1234F1Z5"},
+  "buyer": {"name": "Sample Tea House", "address": "4 River Lane",
+            "state_code": "18", "gstin": "18PQRST6789K1Z2"},
+  "place_of_supply_state_code": "18",
+  "invoice": {"number": "INV/2026-27/0001", "date": "2026-11-02",
+              "due_date": "2026-11-09"},
+  "items": [
+    {"name": "CTC Tea (1 kg)", "hsn": "0902", "qty": 10, "rate": 420, "gst_percent": 5},
+    {"name": "Earthen Cups (pack of 12)", "hsn": "6912", "qty": 20, "rate": 60, "gst_percent": 12},
+    {"name": "Masala Combo Pack", "hsn": "0910", "qty": 15, "rate": 149, "gst_percent": 5},
+    {"name": "Electric Kettle 1.8L", "hsn": "8516", "qty": 3, "rate": 1299, "gst_percent": 18},
+    {"name": "LED Bulb 9W (set of 4)", "hsn": "8539", "qty": 8, "rate": 299, "gst_percent": 18}
+  ]
+}
