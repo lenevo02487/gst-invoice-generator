@@ -1,68 +1,66 @@
-# GST Invoice Generator
+# GST Invoice Generator — Decimal-Exact, Stdlib-Only
 
-A command-line Python tool for small shops and traders: feed it your items,
-and it generates a **professional, print-ready GST invoice (HTML)** with all
-tax maths done automatically — no spreadsheet formulas, no calculation
-mistakes, no installs (Python standard library only).
+A command-line GST invoice generator in pure Python (standard library
+only — nothing to install). Feed it a JSON invoice, get a print-ready
+HTML tax invoice with correct CGST/SGST or IGST, per-rate tax summary,
+round-off line and amount in words (Indian numbering system).
 
 ## What it does
 
-- Seller/buyer details, invoice number, date and due date on the invoice
-- Per-item rows: name, HSN code, quantity, rate, GST % — with line-wise
-  taxable value and tax
-- **Automatic GST logic:** comparing seller and buyer state codes decides
-  **CGST + SGST** (same state, tax split in half) or **IGST** (other state)
-- **Tax summary grouped by GST rate** (e.g. 5% / 12% / 18%)
-- Subtotal, total GST, round-off and **Grand Total**
-- **Amount in words** in the Indian numbering system (Lakh/Crore), e.g.
-  "Rupees Fifteen Thousand Five Hundred Twenty Two Only"
-- Money maths with `Decimal` and half-up rounding — no float errors
+- **Per-line-item tax** at each item's own GST rate — never one rate on
+  the invoice total
+- **CGST/SGST vs IGST decided by one rule:** seller state vs place of
+  supply. Same state → tax split half/half; different → full IGST
+- **Exact split on odd paise:** CGST is rounded, SGST = tax − CGST, so
+  CGST + SGST always equals the line GST to the paisa
+- All money in `Decimal`, rounded to the paisa with `ROUND_HALF_UP`
+- Grand total rounded to the nearest rupee with an explicit round-off line
+- GSTIN format + state-prefix validation, FY-aware (April–March)
+  sequential invoice numbering helper, tax-inclusive price reverse
+  calculator (`extract_base_from_inclusive`)
 
-## How to run
-
-No installation needed — just Python 3.8+.
+## Run it
 
 ```bash
-# JSON input (the whole invoice in one file)
-python3 invoice_gen.py --input sample_invoice.json --output sample_invoice.html
-
-# CSV input (items in CSV, shop/customer details in a meta JSON file)
-python3 invoice_gen.py --input sample_items.csv --meta sample_meta.json --output sample_invoice_from_csv.html
+python invoice_gen.py sample_invoice.json -o invoice.html
+python invoice_gen.py sample_invoice.json --check   # totals only
+python -m unittest discover -s tests                # 9 tests
 ```
 
-Open the generated HTML in a browser → Print (Ctrl+P) → save as PDF or print.
+## Sample run (actual output)
 
-## Real output from the sample data
-
-```text
-Invoice ready: sample_invoice.html
-  Subtotal ₹13,924.00 + GST ₹1,597.77 = Grand Total ₹15,522.00 (CGST/SGST)
-  In words: Rupees Fifteen Thousand Five Hundred Twenty Two Only
+```
+mode: intra-state (CGST+SGST)
+subtotal ₹13,924.00 | GST ₹1,597.77 (CGST ₹798.89 + SGST ₹798.88 + IGST ₹0.00)
+round-off +0.23 | grand total ₹15,522.00
 ```
 
-Tax summary of the sample invoice: 5% → ₹321.75 · 12% → ₹144.00 · 18% → ₹1,132.02
-(totals independently re-verified outside the tool — exact match).
+The same basket sent inter-state produces IGST ₹1,597.77 and the same
+₹15,522.00 grand total — both cases are covered by tests, along with
+discount lines, odd-paisa splits and amount-in-words
+("Rupees Fifteen Thousand Five Hundred Twenty Two Only").
 
-## Files
+## Layout
 
-| File | What it is |
-|---|---|
-| `invoice_gen.py` | The tool (standard library only, ~13 KB) |
-| `sample_invoice.json` | Sample input — JSON mode |
-| `sample_items.csv` + `sample_meta.json` | Sample input — CSV mode |
-| `sample_invoice.html` | Generated invoice (JSON mode) |
-| `sample_invoice_from_csv.html` | Generated invoice (CSV mode) |
+```
+gst_invoice/
+  models.py     Party / LineItem / Invoice dataclasses + validation
+  tax.py        per-line computation, rate summaries, round-off
+  numbering.py  financial-year invoice series (JSON state file)
+  words.py      amount in words — crore / lakh / thousand
+  build.py      JSON dict -> Invoice (input boundary)
+  render.py     print-ready HTML invoice
+invoice_gen.py  CLI
+```
 
-## Tech used
+## Honest scope
 
-Python 3 (standard library only) · `argparse` · `csv` · `json` · `decimal` · HTML output
+This generates correct invoice documents and arithmetic. It is not
+e-invoicing (IRN), GSTR filing, or tax advice — rates come from your
+input, so confirm each item's rate for your HSN/SAC before issuing.
 
-## Hire me
+## Want one for your business?
 
-Want a billing/invoice tool or another repetitive Excel/data task automated
-for your business? **Demo first — on YOUR sample — before you pay anything.**
-
-- Fiverr gig (from $15): https://www.fiverr.com/lenevo509/build-a-python-web-scraper-or-automation-script-for-you
-- LinkedIn: https://www.linkedin.com/in/abhishek-phukan-a220b9448/
-
-*Built by Abhishek Phukan — Python Automation Developer.*
+Send me your shop details and one sample bill — I'll generate a demo
+invoice with your own data first, free. Judge the output, then decide.
+— Abhishek
